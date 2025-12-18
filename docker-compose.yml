@@ -1,0 +1,42 @@
+services:
+  # Nama service untuk app Spring Boot kita
+  app:
+    build: . # Bina image dari Dockerfile dalam folder yang sama
+    container_name: gengshop-app
+    ports:
+      - "8080:8080" # Map port 8080 dari laptop ke port 8080 dalam container
+    environment:
+      # Spring Boot akan baca environment variable ni
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/${POSTGRES_DB}
+      - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER}
+      - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update # 'update' untuk dev, 'validate' untuk prod
+    depends_on:
+      - db # Pastikan service 'db' start dulu
+    networks:
+      - gengshop-network
+
+  # Nama service untuk database PostgreSQL
+  db:
+    image: postgres:16-alpine # Guna official PostgreSQL image
+    container_name: gengshop-db
+    environment:
+      # Environment variable untuk setup database
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    ports:
+      - "5435:5432" # Boleh access dari laptop guna pgAdmin atau DBeaver
+    volumes:
+      - postgres_data:/var/lib/postgresql/data # Simpan data supaya tak hilang bila container stop
+    networks:
+      - gengshop-network
+
+# Define network yang akan digunakan
+networks:
+  gengshop-network:
+    driver: bridge
+
+# Define volume untuk simpan data database
+volumes:
+  postgres_data:
