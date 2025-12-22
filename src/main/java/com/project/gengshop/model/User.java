@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
@@ -14,6 +15,7 @@ import java.util.Set;
 @Table(name = "users")
 @RequiredArgsConstructor
 @NoArgsConstructor
+@Data
 public class User {
 
     @Id
