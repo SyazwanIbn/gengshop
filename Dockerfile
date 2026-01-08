@@ -20,7 +20,7 @@ FROM eclipse-temurin:21-jre
 WORKDIR /app
 
 # Copy the built jar from the builder stage
-COPY --from=builder /app/target/gengshop-*.jar app.jar
+COPY --from=builder /app/target/*.jar app.jar
 
 # Expose the port the app runs on
 EXPOSE 8080
