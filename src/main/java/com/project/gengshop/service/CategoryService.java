@@ -7,6 +7,8 @@ import com.project.gengshop.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class CategoryService {
@@ -40,6 +42,21 @@ public class CategoryService {
         Category savedCategory = categoryRepository.save(newCategory);
         //convert back to categoryDto
         return convertToDto(savedCategory);
+    }
+
+    //get all categories
+    public List<CategoryDto> getAllCategories() {
+        List<Category> allCategories = categoryRepository.findAll();
+        return allCategories.stream()
+                .map(this::convertToDto)
+                .toList();
+    }
+
+    // get category by id
+    public CategoryDto getCategoryById(Long id) {
+        Category getCategoryId = categoryRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Category with id " + id + " not found"));
+        return convertToDto(getCategoryId);
     }
 
 }
