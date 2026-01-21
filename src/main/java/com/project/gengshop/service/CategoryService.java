@@ -59,4 +59,14 @@ public class CategoryService {
         return convertToDto(getCategoryId);
     }
 
+    //update category by id
+    public CategoryDto updateCategory(Long id, CategoryDto categoryDto) {
+        Category existingCategory = categoryRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Category with id " + id + " not found"));
+
+        existingCategory.setName(categoryDto.getName());
+        Category updatedCategory = categoryRepository.save(existingCategory);
+        return convertToDto(updatedCategory);
+    }
+
 }
