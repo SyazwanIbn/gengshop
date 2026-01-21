@@ -8,10 +8,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -29,6 +27,20 @@ public class ProductController {
         ProductDto createdProducts = productService.createProduct(productDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdProducts);
 
+    }
+
+    //get all products
+    @GetMapping("/products")
+    public ResponseEntity<List<ProductDto>> getAllProducts() {
+        List<ProductDto> getALLProducts = productService.getAllProducts();
+        return ResponseEntity.status(HttpStatus.OK).body(getALLProducts);
+    }
+
+    //get product by id
+    @GetMapping("products/{id}")
+    public ResponseEntity<ProductDto> getProductById(@PathVariable Long id) {
+        ProductDto productDto = productService.getProductById(id);
+        return ResponseEntity.status(HttpStatus.OK).body(productDto);
     }
 
 }

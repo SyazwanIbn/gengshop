@@ -7,8 +7,11 @@ import com.project.gengshop.model.Product;
 import com.project.gengshop.repository.CategoryRepository;
 import com.project.gengshop.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -55,5 +58,21 @@ public class ProductService {
         //save new Product
         Product savedProduct = productRepository.save(newProduct);
         return convertToDto(savedProduct);
+    }
+
+    //get list product
+    public List<ProductDto> getAllProducts() {
+        List<Product> allProducts = productRepository.findAll();
+        return allProducts.stream()
+                .map(this::convertToDto)
+                .toList();
+
+    }
+
+    //get product by ID
+    public ProductDto getProductById(Long id) {
+        Product productId = productRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Product with id " + id + " not found"));
+        return convertToDto(productId);
     }
 }
