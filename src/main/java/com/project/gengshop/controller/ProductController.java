@@ -1,7 +1,6 @@
 package com.project.gengshop.controller;
 
 import com.project.gengshop.dto.ProductDto;
-import com.project.gengshop.repository.ProductRepository;
 import com.project.gengshop.service.CategoryService;
 import com.project.gengshop.service.ProductService;
 import jakarta.validation.Valid;
@@ -9,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
+
 
 import java.util.List;
 
@@ -41,6 +40,22 @@ public class ProductController {
     public ResponseEntity<ProductDto> getProductById(@PathVariable Long id) {
         ProductDto productDto = productService.getProductById(id);
         return ResponseEntity.status(HttpStatus.OK).body(productDto);
+    }
+
+    //update Product by id
+    @PutMapping("/products/{id}")
+    public ResponseEntity<ProductDto> updateProduct(
+            @Valid
+            @PathVariable Long id,
+            @RequestBody ProductDto productDto) {
+        ProductDto updatedProducts = productService.updateProduct(id, productDto);
+        return ResponseEntity.status(HttpStatus.OK).body(updatedProducts);
+    }
+
+    @DeleteMapping("/products/{id}")
+    public ResponseEntity<String> deleteProduct(@PathVariable Long id) {
+        productService.deleteProduct(id);
+        return ResponseEntity.ok("Product with ID " + id + " has been deleted");
     }
 
 }

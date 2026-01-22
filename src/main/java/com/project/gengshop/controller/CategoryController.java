@@ -45,4 +45,14 @@ public class CategoryController {
         return ResponseEntity.ok(updatedCategory);
     }
 
+    //soft delete cascade sekalid dengan produk
+    @DeleteMapping("/categories/{id}")
+    public ResponseEntity<?> deleteCategory(@PathVariable Long id) {
+        categoryService.deleteCategory(id);
+        return ResponseEntity.ok("Category with id: " + id + "successfully delete");
+    }
+
+
+
+
 }
