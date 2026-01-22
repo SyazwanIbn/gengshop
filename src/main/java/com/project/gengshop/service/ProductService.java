@@ -62,8 +62,8 @@ public class ProductService {
 
     //get list product
     public List<ProductDto> getAllProducts() {
-        List<Product> allProducts = productRepository.findAll();
-        return allProducts.stream()
+        List<Product> activeProducts = productRepository.findAllByDeleted(false);
+        return activeProducts.stream()
                 .map(this::convertToDto)
                 .toList();
 
@@ -74,5 +74,32 @@ public class ProductService {
         Product productId = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Product with id " + id + " not found"));
         return convertToDto(productId);
+    }
+
+    //update product
+    @Transactional
+    public ProductDto updateProduct(Long id, ProductDto productDto) {
+        Product existingProduct = productRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Product with id " + id + " not found"));
+
+        existingProduct.setName(productDto.getName());
+        existingProduct.setDescription(productDto.getDescription());
+        existingProduct.setPrice(productDto.getPrice());
+        existingProduct.setQuantity(productDto.getQuantity());
+        Product updatedProduct = productRepository.save(existingProduct);
+        return convertToDto(updatedProduct);
+
+    }
+
+
+    //soft delete product
+    @Transactional
+    public void deleteProduct(Long id) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Product with id " + id + " not found"));
+
+        //set flag deleted to true
+        product.setDeleted(true);
+        productRepository.save(product);
     }
 }

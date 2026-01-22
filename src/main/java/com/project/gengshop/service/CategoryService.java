@@ -3,7 +3,10 @@ package com.project.gengshop.service;
 import com.project.gengshop.dto.CategoryDto;
 import com.project.gengshop.exception.ResourceNotFoundException;
 import com.project.gengshop.model.Category;
+import com.project.gengshop.model.Product;
 import com.project.gengshop.repository.CategoryRepository;
+import com.project.gengshop.repository.ProductRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +17,7 @@ import java.util.List;
 public class CategoryService {
 
     private final CategoryRepository categoryRepository;
+    private final ProductRepository productRepository;
 
     //helper method convert CategoryEntity to CategoryDto
     private CategoryDto convertToDto(Category category) {
@@ -67,6 +71,25 @@ public class CategoryService {
         existingCategory.setName(categoryDto.getName());
         Category updatedCategory = categoryRepository.save(existingCategory);
         return convertToDto(updatedCategory);
+    }
+
+    //soft delete category
+    @Transactional
+    public void deleteCategory(Long id) {
+        Category category  = categoryRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Category with id " + id + " not found"));
+
+        //set flag deleted ke true
+        category.setDeleted(true);
+        categoryRepository.save(category);
+
+        List<Product> productsInCategory = productRepository.findByCategoryId(id);
+
+        for (Product product : productsInCategory) {
+            product.setDeleted(true);
+        }
+
+        productRepository.saveAll(productsInCategory);
     }
 
 }
